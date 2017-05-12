@@ -12,11 +12,10 @@ const byline = require('byline');
 const ThingTalk = require('thingtalk');
 const Ast = ThingTalk.Ast;
 
-const ThingPediaClient = require('./http_client');
+const ThingpediaClient = require('./http_client');
 const LocalSempre = require('./localsempre');
 const SempreClient = require('../lib/sempreclient');
 
-const Codegen = require('../lib/codegen');
 const SemanticAnalyzer = require('../lib/semantic');
 
 var sempre, session, schemas;
@@ -41,7 +40,7 @@ class CanonicalChecker {
         var comparisons = [];
         var toFill = [];
 
-        Codegen.assignSlots(slots, obj.args, values, comparisons, required, toFill);
+        ThingTalk.Generate.assignSlots(slots, obj.args, values, comparisons, required, toFill);
 
         while (toFill.length > 0) {
             var idx = toFill.pop();
@@ -74,7 +73,7 @@ class CanonicalChecker {
                 this._slotFill(this.trigger, false);
                 this._slotFill(this.action, true);
 
-                return Codegen.codegenRule(schemas, this.trigger, this.action);
+                return ThingTalk.Generate.codegenRule(schemas, this.trigger, this.action);
             });
     }
 }
@@ -88,7 +87,7 @@ function main() {
         sempre = new SempreClient();
     sempre.start();
     session = sempre.openSession();
-    schemas = new ThingTalk.SchemaRetriever(new ThingPediaClient(), true);
+    schemas = new ThingTalk.SchemaRetriever(new ThingpediaClient(), true);
 
     var linestdin = byline(process.stdin);
     linestdin.setEncoding('utf8');
