@@ -793,8 +793,8 @@ const TEST_CASES = [
         return Promise.resolve(ThingTalk.Grammar.parseAndTypecheck(`now => @com.xkcd.get_comic() => notify;`, almond.schemas, true).then((prog) => {
             almond.runProgram(prog, 'uuid-12345', 'phone:+555654321');
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> I'm going to get an Xkcd comic and then notify you (as asked by Carol Johnson).
@@ -810,8 +810,8 @@ const TEST_CASES = [
         return ThingTalk.Grammar.parseAndTypecheck(`now => @com.bing.web_search() => notify;`, almond.schemas, true).then((prog) => {
             almond.runProgram(prog, 'uuid-12345', 'phone:+555654321');
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         });
     },
 `>> What do you want to search?
@@ -834,16 +834,16 @@ const TEST_CASES = [
 
     [(almond) => {
         return Promise.resolve().then(() => {
-            return almond.notify('uuid-test-notify1', 'com.xkcd', 'com.xkcd:get_comic', {
+            almond.notify('uuid-test-notify1', 'com.xkcd', 'com.xkcd:get_comic', {
                 number: 1986,
                 title: 'River Border',
                 picture_url: 'http://imgs.xkcd.com/comics/river_border.png',
                 link: 'https://xkcd.com/1986',
                 alt_text: `I'm not a lawyer, but I believe zones like this are technically considered the high seas, so if you cut a pizza into a spiral there you could be charged with pieracy under marinaritime law.` //'
             });
-        }).then(() => {
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         });
     },
 `>> rdl: River Border https://xkcd.com/1986
@@ -863,9 +863,9 @@ const TEST_CASES = [
                 link: 'https://xkcd.com/1986',
                 alt_text: `I'm not a lawyer, but I believe zones like this are technically considered the high seas, so if you cut a pizza into a spiral there you could be charged with pieracy under marinaritime law.` //'
             });
-        }).then(() => {
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         });
     },
 `>> Notification from Xkcd ⇒ Notification
@@ -879,10 +879,10 @@ const TEST_CASES = [
 
     [(almond) => {
         return Promise.resolve().then(() => {
-            return almond.notifyError('uuid-test-notify2', 'com.xkcd', new Error('Something went wrong'));
-        }).then(() => {
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            almond.notifyError('uuid-test-notify2', 'com.xkcd', new Error('Something went wrong'));
+
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         });
     },
 `>> Xkcd ⇒ Notification had an error: Something went wrong.
@@ -897,8 +897,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, null);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to consume “foo”.
@@ -924,8 +924,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, null);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> bogus@example.com would like to consume “foo”.
@@ -951,8 +951,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, null);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> X1234567 would like to consume “foo”.
@@ -978,8 +978,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to consume “foo”.
@@ -1053,8 +1053,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, null);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1079,8 +1079,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1104,8 +1104,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1135,8 +1135,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1166,8 +1166,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1202,8 +1202,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1233,8 +1233,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1278,8 +1278,8 @@ const TEST_CASES = [
                 assert.strictEqual(res, prog);
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1826,8 +1826,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
             Promise.resolve(almond.askForPermission('mock-account:...', 'email:bob@smith.com', prog).then((res) => {
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1883,8 +1883,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
             Promise.resolve(almond.askForPermission('mock-account:...', 'email:bob@smith.com', prog).then((res) => {
             }));
 
-            // inject a meaningless intent so we synchronize the two concurrent tasks
-            return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+            // synchronize the two concurrent tasks
+            return almond._dispatcher._mgrPromise;
         }));
     },
 `>> Bob Smith (dad) would like to get an Xkcd comic and then notify you.
@@ -1940,8 +1940,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
             assert.strictEqual(v, 42);
         });
 
-        // inject a meaningless intent so we synchronize the two concurrent tasks
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> What is the answer to life the universe and everything?
 >> context = null // {}
@@ -1960,8 +1960,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
             assert.strictEqual(err.code, 'ECANCELLED');
         });
 
-        // inject a meaningless intent so we synchronize the two concurrent tasks
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> What is the answer to life the universe and everything?
 >> context = null // {}
@@ -1981,8 +1981,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
             assert.strictEqual(err.code, 'ECANCELLED');
         });
 
-        // inject a meaningless intent so we synchronize the two concurrent tasks
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> What is the answer to life the universe and everything?
 >> context = null // {}
@@ -2034,7 +2034,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('com.xkcd');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> com.xkcd has been enabled successfully.
 >> context = null // {}
@@ -2046,7 +2047,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('com.instagram');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> OK, here's the link to configure Instagram.
 >> link: Configure Instagram /devices/oauth2/com.instagram?name=Instagram
@@ -2059,7 +2061,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('org.thingpedia.rss');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Please enter the Feed URL.
 >> context = null // {}
@@ -2076,7 +2079,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('com.tumblr.blog');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Choose one of the following to configure Tumblr Blog.
 >> link: Configure Tumblr Account /devices/oauth2/com.tumblr?name=Tumblr Account
@@ -2090,7 +2094,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('org.thingpedia.builtin.matrix');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Insert your Matrix username:
 >> context = null // {}
@@ -2117,7 +2122,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('com.lg.tv.webos2');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Searching for LG WebOS TV…
 >> Can't find any LG WebOS TV around.
@@ -2130,7 +2136,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('org.thingpedia.builtin.bluetooth.generic');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Searching for Generic Bluetooth Device…
 >> I found the following devices. Which one do you want to set up?
@@ -2154,7 +2161,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
             assert.strictEqual(err.code, 'ECANCELLED');
         });
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Searching for devices nearby…
 >> I found the following devices. Which one do you want to set up?
@@ -2217,6 +2225,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 `,
     ['bookkeeping', 'special', 'special:yes'],
 `>> Yes what?
+>> context = null // {}
+>> ask special command
 `,
     ['bookkeeping', 'answer', '0'],
 `>> Sorry, but that's not what I asked.
@@ -2252,7 +2262,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
     (almond) => {
         almond.interactiveConfigure('org.thingpedia.builtin.thingengine.home');
 
-        return almond.handleParsedCommand({ code: ['bookkeeping', 'special', 'special:wakeup'], entities: {} });
+        // synchronize the two concurrent tasks
+        return almond._dispatcher._mgrPromise;
     },
 `>> Sorry, I don't know how to configure Home.
 >> context = null // {}
@@ -2262,7 +2273,9 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 
     [
     ['bookkeeping', 'special', 'special:wakeup'],
-``,
+`>> context = null // {}
+>> ask special null
+`,
     null],
 
     [
@@ -2502,7 +2515,8 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 >> ask special generic
 `,
     {"code":["bookkeeping","special","special:nevermind"],"entities":{}},
-`>> context = null // {}
+`>> Sorry I couldn't help on that.
+>> context = null // {}
 >> ask special null
 `,
     `{
@@ -2523,9 +2537,7 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 >> ask special generic
 `,
     ['now', '=>', '@com.xkcd.get_comic', '=>', 'notify'],
-`>> context = null // {}
->> ask special null
->> Sorry, I did not find any result for that.
+`>> Sorry, I did not find any result for that.
 >> context = now => @com.xkcd.get_comic => notify // {}
 >> ask special null
 `,
@@ -2547,9 +2559,7 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 >> ask special generic
 `,
     ['now', '=>', '@com.twitter.post'],
-`>> context = null // {}
->> ask special null
->> You have multiple Twitter devices. Which one do you want to use?
+`>> You have multiple Twitter devices. Which one do you want to use?
 >> choice 0: Twitter Account foo
 >> choice 1: Twitter Account bar
 >> context = now => @com.twitter.post // {}
@@ -2573,9 +2583,7 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 >> ask special choice
 `,
     ['now', '=>', '@com.xkcd.get_comic', '=>', 'notify'],
-`>> context = null // {}
->> ask special null
->> Sorry, I did not find any result for that.
+`>> Sorry, I did not find any result for that.
 >> context = now => @com.xkcd.get_comic => notify // {}
 >> ask special null
 `,
@@ -2863,16 +2871,14 @@ null],
 >> ask special null
 `,
     ['bookkeeping', 'special', 'special:train'],
-`>> context = null // {}
->> ask special null
->> Did you mean get an Xkcd comic and then notify you?
->> context = null // {}
+`>> Did you mean get an Xkcd comic and then notify you?
+>> context = now => @com.xkcd.get_comic => notify // {}
 >> ask special yesno
 `,
     ['bookkeeping', 'special', 'special:yes'],
 `>> Thanks, I made a note of that.
 >> You have trained me with 1 sentence.
->> context = null // {}
+>> context = now => @com.xkcd.get_comic => notify // {}
 >> ask special null
 `,
     `{
@@ -2885,10 +2891,8 @@ null],
 >> ask special null
 `,
     ['bookkeeping', 'special', 'special:train'],
-`>> context = null // {}
->> ask special null
->> Did you mean get an Xkcd comic and then notify you?
->> context = null // {}
+`>> Did you mean get an Xkcd comic and then notify you?
+>> context = now => @com.xkcd.get_comic => notify // {}
 >> ask special yesno
 `,
     ['bookkeeping', 'special', 'special:no'],
@@ -2925,14 +2929,12 @@ null],
 >> ask special yesno
 `,
     ['bookkeeping', 'special', 'special:train'],
-`>> context = null // {}
->> ask special null
->> Did you mean any of the following?
+`>> Did you mean any of the following?
 >> choice 0: tweet ____
 >> choice 1: tweet “multiple results”
 >> choice 2: post ____ on Facebook
 >> choice 3: none of the above
->> context = null // {}
+>> context = now => @com.twitter.post // {}
 >> ask special choice
 `,
     ['bookkeeping', 'special', 'special:no'],
@@ -2948,20 +2950,18 @@ null],
 >> ask special yesno
 `,
     ['bookkeeping', 'special', 'special:train'],
-`>> context = null // {}
->> ask special null
->> Did you mean any of the following?
+`>> Did you mean any of the following?
 >> choice 0: tweet ____
 >> choice 1: tweet “multiple results”
 >> choice 2: post ____ on Facebook
 >> choice 3: none of the above
->> context = null // {}
+>> context = now => @com.twitter.post // {}
 >> ask special choice
 `,
     ['bookkeeping', 'choice', '1'],
 `>> Thanks, I made a note of that.
 >> You have trained me with 2 sentences.
->> context = null // {}
+>> context = now => @com.twitter.post // {}
 >> ask special null
 `,
     null],
@@ -2972,14 +2972,12 @@ null],
 >> ask special yesno
 `,
     ['bookkeeping', 'special', 'special:train'],
-`>> context = null // {}
->> ask special null
->> Did you mean any of the following?
+`>> Did you mean any of the following?
 >> choice 0: tweet ____
 >> choice 1: tweet “multiple results”
 >> choice 2: post ____ on Facebook
 >> choice 3: none of the above
->> context = null // {}
+>> context = now => @com.twitter.post // {}
 >> ask special choice
 `,
     ['bookkeeping', 'choice', '3'],
