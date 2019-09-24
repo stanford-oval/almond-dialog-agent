@@ -2228,12 +2228,6 @@ remote mock-account:MOCK1234-phone:+1234567890/phone:+15555555555 : uuid-XXXXXX 
 >> context = null // {}
 >> ask special command
 `,
-    ['bookkeeping', 'answer', '0'],
-`>> Sorry, but that's not what I asked.
->> I'm looking for a command.
->> context = null // {}
->> ask special command
-`,
     ['bookkeeping', 'special', 'special:nevermind'],
 `>> Sorry I couldn't help on that.
 >> context = null // {}
@@ -2907,6 +2901,11 @@ null],
     // this is a special command that always fails to parse
     // we use it to test the fallback paths
     [`!! test command always failed !!`,
+`>> Sorry, I did not understand that. Use ‘help’ to learn what I can do for you.
+>> context = null // {}
+>> ask special null
+`,
+/*
 `>> Sorry, I did not understand that. Try the following instead:
 >> button: eat test data {"example_id":1,"code":["now","=>","@org.thingpedia.builtin.test.eat_data"],"entities":{},"slotTypes":{},"slots":[]}
 >> button: get test data {"example_id":2,"code":["now","=>","@org.thingpedia.builtin.test.get_data","=>","notify"],"entities":{},"slotTypes":{},"slots":[]}
@@ -2914,6 +2913,7 @@ null],
 >> context = null // {}
 >> ask special null
 `,
+*/
     null],
 
     [`!! test command always nothing !!`,
@@ -2937,7 +2937,7 @@ null],
 >> context = now => @com.twitter.post // {}
 >> ask special choice
 `,
-    ['bookkeeping', 'special', 'special:no'],
+    ['bookkeeping', 'special', 'special:nevermind'],
 `>> Sorry I couldn't help on that.
 >> context = null // {}
 >> ask special null
@@ -3809,7 +3809,7 @@ async function main(limit = Infinity) {
 
     var delegate = new TestDelegate();
 
-    const sempreUrl = 'https://almond-dev.stanford.edu/nnparser';
+    const sempreUrl = 'https://nlp-staging.almond.stanford.edu';
     almond = new Almond(engine, 'test', new MockUser(), delegate,
         { debug: false, sempreUrl: sempreUrl, showWelcome: true, anonymous: false,
           testMode: true });
