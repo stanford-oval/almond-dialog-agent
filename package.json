@@ -25,7 +25,7 @@
   "devDependencies": {
     "byline": "^5.0.0",
     "coveralls": "^3.0.0",
-    "eslint": "^6.0.0",
+    "eslint": "^7.1.0",
     "node-gettext": "^2.0.0",
     "nyc": "^15.0.0"
   },
